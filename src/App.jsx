@@ -1,29 +1,26 @@
 import { useState } from 'react'
 import { Card } from './Card'
-// Aqui você irá escrever as suas funções de Validação, para verificar se o Formulário foi preenchido corretamente
+import './App.scss'
 
 function validateName(name) {
   const withoutSpaces = name.trim()
 
-  if (withoutSpaces.length > 3) return true
+  if (withoutSpaces.length >= 3) return true
   else return false
 }
 
 function validateColor(color) {
-  if (color.length !== 7 || color.charAt(0) !== '#') return false
-  else return true
+  if ((color.charAt(0) === "#") && (color.length >= 6) && (/\d/.test(color))) return true
+  else return false
 }
 
 function App() {
-  // Aqui você irá criar os Estados para manipular os Inputs
   const [name, setName] = useState('')
   const [color, setColor] = useState('')
   const [colorArray, setColorArray] = useState([])
-  const [formularioErro, setFormularioErro] = useState(false)
+  const [formError, setFormError] = useState(false)
 
-  // function addNewColor() {setColorArray([...colorArray, color])}
-
-  function validateValues(event) {
+  function addNewColor(event) {
     event.preventDefault()
 
     const newColor = {
@@ -32,44 +29,60 @@ function App() {
     }
 
     if (validateName(name) && validateColor(color)) {
-      setFormularioErro(false)
-      setColorArray([...colorArray, color])
+      setFormError(false)
+      setColorArray([...colorArray, newColor])
       setName('')
       setColor('')
-    } else {
-      setFormularioErro(true)
+    } 
+    else {
+      setFormError(true)
     }
   }
 
   return (
     <div className="App">
-      <h1>Carga de estudiantes</h1>
-      <form className={formularioErro ? 'form-error' : ''} onSubmit={e => validateValues(e, name, color)}>
-        {/* Comece a desenvolver o seu Código por aqui :) */}
-        <label htmlFor="name">Nome:</label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={event => setName(event.target.value)}
-        />
-        <label htmlFor="color">Cor:</label>
-        <input
-          id="color"
-          type="text"
-          value={color}
-          onChange={event => setColor(event.target.value)}
-        />
-        <button type="submit">Adicionar</button>
-      </form>
+      <section className={`add-color-section ${formError ? 'form-error' : ''}`}>
+        <form onSubmit={e => addNewColor(e)}>
+          <h2 className="section-title">Adicionar nova cor</h2>
+          <div className="inputs">
+            <div className="name-input">
+              <label htmlFor="name">Nome</label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={event => setName(event.target.value)}
+              />
+            </div>
+            
+            <div className="color-input">
+              <label htmlFor="color">Cor</label>
+              <input
+                id="color"
+                type="text"
+                value={color}
+                placeholder="Insira sua cor no formato Hexadecimal"
+                onChange={event => setColor(event.target.value)}
+                />
+            </div>
+          </div>
 
-      {formularioErro ? <span>O seu formulário contem erros</span> : null}
+          <div className="add-button">
+            <button type="submit">Adicionar</button>
+          </div>
+        </form>
+      </section>
 
-      <section className="products">
-        {colorArray.map(color => {
-          return <p>lorem30</p>
-          // <Card cardData={color} />          
-        })}
+      {formError && <span>Por favor, verifique os dados inseridos no formulário</span>}
+
+      <section className="cards-section">
+        <h2 className="section-title">Cores favoritas</h2>
+
+        <div className="cards">
+          {colorArray.map(color => {
+            return <Card cardData={color} />          
+          })}
+        </div>
       </section>
     </div>
   )
