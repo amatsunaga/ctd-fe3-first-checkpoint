@@ -79,8 +79,8 @@ function App() {
         <h2 className="section-title">Cores favoritas</h2>
 
         <div className="cards">
-          {colorArray.map(color => {
-            return <Card cardData={color} />          
+          {colorArray.map((color, index) => {
+            return <Card cardData={color} key={index} />          
           })}
         </div>
       </section>
